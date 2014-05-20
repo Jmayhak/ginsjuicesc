@@ -1,38 +1,48 @@
 <?php
 
-$uploadsWritable = is_writable(PATH_BASE.'/themes');
-$themesWritable = is_writable(PATH_BASE.'/uploads');
-$curlInstalled = function_exists('curl_init') && defined('CURLOPT_FOLLOWLOCATION');
-$gdInstalled = extension_loaded('gd');
-$zipInstalled = class_exists('ZipArchive');
-$showTips = (!$uploadsWritable || !$themesWritable || !$curlInstalled || !$gdInstalled || !$zipInstalled);
+$warnings = [];
+$writablePaths = [
+    '/themes',
+    '/uploads',
+    '/uploads/public',
+    '/uploads/protected',
+    '/app/storage',
+    '/app/storage/logs',
+    '/app/storage/cache',
+    '/app/storage/twig',
+    '/app/storage/meta',
+    '/app/storage/combiner',
+];
+$requiredExtensions = [
+    'GD' => extension_loaded('gd'),
+    'fileinfo' => extension_loaded('fileinfo'),
+    'Zip' => class_exists('ZipArchive'),
+    'cURL' => function_exists('curl_init') && defined('CURLOPT_FOLLOWLOCATION'),
+];
+
+foreach ($writablePaths as $path) {
+    if (!is_writable(PATH_BASE.$path))
+        $warnings[] = Lang::get('backend::lang.warnings.permissions', ['name' => '<strong>'.$path.'</strong>']);
+}
+foreach ($requiredExtensions as $extension => $installed) {
+    if (!$installed)
+        $warnings[] = Lang::get('backend::lang.warnings.extension', ['name' => '<strong>'.$extension.'</strong>']);
+}
 
 ?>
-<?php if ($showTips): ?>
+<?php if (count($warnings)): ?>
     <div class="callout callout-warning">
         <div class="header">
             <i class="icon-warning"></i>
-            <h3>System configuration tips</h3>
-            <p>There are issues you need to pay attention to in order to configure the system properly.</p>
+            <h3><?= e(trans('backend::lang.warnings.tips')) ?></h3>
+            <p><?= e(trans('backend::lang.warnings.tips_description')) ?></p>
         </div>
 
         <div class="content">
             <ul>
-                <?php if (!$uploadsWritable): ?>
-                    <li>Directory <strong>/uploads</strong> or its subdirectories is not writable for PHP. Please set corresponding permissions for the webserver on this directory.</li>
-                <?php endif ?>
-                <?php if (!$uploadsWritable): ?>
-                    <li>Directory <strong>/themes</strong> or its subdirectories is not writable for PHP. Please set corresponding permissions for the webserver on this directory.</li>
-                <?php endif ?>
-                <?php if (!$curlInstalled): ?>
-                    <li>The PHP extension <strong>cURL</strong> is not installed. Please install this library and activate the extension.</li>
-                <?php endif ?>
-                <?php if (!$gdInstalled): ?>
-                    <li>The PHP extension <strong>GD</strong> is not installed. Please install this library and activate the extension.</li>
-                <?php endif ?>
-                <?php if (!$zipInstalled): ?>
-                    <li>The PHP extension <strong>Zip</strong> is not installed. Please install this library and activate the extension.</li>
-                <?php endif ?>
+                <?php foreach ($warnings as $warning): ?>
+                    <li><?= $warning ?></li>
+                <?php endforeach ?>
             </ul>
         </div>
     </div>
