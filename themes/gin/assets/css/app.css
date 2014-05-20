@@ -3,3 +3,8 @@
     height: 247px;
     width: 370px;
 }
+
+ul {
+  list-style-type: none;
+}
+
