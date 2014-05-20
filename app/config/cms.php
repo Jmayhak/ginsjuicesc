@@ -11,7 +11,7 @@ return array(
     |
     */
 
-    'activeTheme' => 'gin',
+    'activeTheme' => 'demo',
 
     /*
     |--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ return array(
     |
     */
 
-    'backendUri' => '/backend',
+    'backendUri' => 'backend',
 
     /*
     |--------------------------------------------------------------------------
@@ -167,6 +167,19 @@ return array(
     |
     */
 
-    'defaultMask' => ['file' => '777', 'folder' => '777'],
+    'defaultMask' => ['file' => null, 'folder' => null],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Convert Line Endings
+    |--------------------------------------------------------------------------
+    |
+    | Determines if October should convert line endings from the windows style
+    | \r\n to the unix style \n.
+    |
+    */
+
+    'convertLineEndings' => false,
+
 
 );
