@@ -1,5 +1,4 @@
 vendor
 composer.lock
 app/storage/cache
-app/storage/sessions
 app/storage/twig
